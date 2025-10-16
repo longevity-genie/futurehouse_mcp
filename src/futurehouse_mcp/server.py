@@ -18,7 +18,7 @@ from futurehouse_client.models import (
     RuntimeConfig,
     TaskRequest,
 )
-from ldp.agent import AgentConfig
+from smithery.decorators import smithery 
 
 # Configuration
 DEFAULT_HOST = os.getenv("MCP_HOST", "0.0.0.0")
@@ -449,6 +449,7 @@ class FutureHouseMCP(FastMCP):
                 )
     
 # Create the MCP server instance lazily to avoid authentication during imports
+@smithery.server()
 def get_mcp_server():
     """Get or create the MCP server instance."""
     return FutureHouseMCP()

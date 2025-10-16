@@ -1,6 +1,6 @@
 [project]
 name = "futurehouse-mcp"
-version = "0.1.3"
+version = "0.1.4"
 description = "MCP server for FutureHouse platform integration"
 readme = "README.md"
 authors = [
@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.11"
 dependencies = [
+    "mcp>=1.15.0",
     "eliot>=1.17.5",
     "pycomfort>=0.0.18",
     "fastmcp>=2.8.1",
@@ -16,13 +17,14 @@ dependencies = [
     "pydantic>=2.0.0",
     "typer>=0.9.0",
     "futurehouse-client>=0.3.19",
-    "python-dotenv>=1.0.0", 
+    "python-dotenv>=1.0.0",
     "pandas>=2.0.0",
     "biopython>=1.84",
     "typer>=0.16.0",
     "simtk>=0.1.0",
     "openmm>=8.3.0",
     "py3dmol>=2.5.0",
+    "smithery>=0.4.2",
 ]
 
 [project.scripts]
@@ -30,6 +32,9 @@ futurehouse-mcp = "futurehouse_mcp.server:cli_app_stdio"
 server = "futurehouse_mcp.server:cli_app"
 stdio = "futurehouse_mcp.server:cli_app_stdio"
 sse = "futurehouse_mcp.server:cli_app_sse"
+dev = "smithery.cli.dev:main" # Run the MCP server in development mode
+start = "smithery.cli.start:main" # Run the MCP server in production mode
+playground = "smithery.cli.playground:main" # Run server with interactive testing playground
 
 [build-system]
 requires = ["hatchling"]
@@ -37,6 +42,10 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/futurehouse_mcp"]
+
+[tool.smithery]
+server = "futurehouse_mcp.server:get_mcp_server" # Function that returns a patched FastMCP server
+log_level = "warning" # Production log level (optional, defaults to "warning")
 
 [tool.hatch.build]
 exclude = [
