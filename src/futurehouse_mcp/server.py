@@ -6,8 +6,8 @@ import os
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Union
 import json
-
-from fastmcp import FastMCP
+from importlib.metadata import version, PackageNotFoundError
+from fastmcp import FastMCP, Context
 from pydantic import BaseModel, Field
 from eliot import start_action
 import typer
@@ -25,6 +25,12 @@ DEFAULT_HOST = os.getenv("MCP_HOST", "0.0.0.0")
 DEFAULT_PORT = int(os.getenv("MCP_PORT", "3011"))
 DEFAULT_TRANSPORT = os.getenv("MCP_TRANSPORT", "streamable-http")
 
+# Get package version
+try:
+    __version__ = version("futurehouse-mcp")
+except PackageNotFoundError:
+    __version__ = "unknown"
+
 class FutureHouseResult(BaseModel):
     """Result from a FutureHouse API call."""
     data: Any = Field(description="Response data from FutureHouse")
@@ -38,7 +44,7 @@ class FutureHouseMCP(FastMCP):
     
     def __init__(
         self, 
-        name: str = "FutureHouse MCP Server",
+        name: str = f"FutureHouse MCP Server v{__version__}",
         api_key: Optional[str] = None,
         prefix: str = "futurehouse_",
         **kwargs
@@ -452,10 +458,14 @@ class FutureHouseMCP(FastMCP):
 def get_mcp_server():
     """Get or create the MCP server instance."""
     return FutureHouseMCP()
+class SmitheryConfigSchema(BaseModel):
+    api_key: str = Field(..., description="FutureHouse API key")
 
-@smithery.server()
-def start_mcp_smithery():
-    return get_mcp_server()
+@smithery.server(config_schema=SmitheryConfigSchema)
+def start_mcp_smithery(ctx: Context):
+    """Start the FutureHouse MCP server with Smithery configuration."""
+    session_config = ctx.session_config
+    return FutureHouseMCP(api_key=session_config.api_key)
 
 
 # CLI application using typer

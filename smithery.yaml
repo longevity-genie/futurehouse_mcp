@@ -1,1 +1,14 @@
-runtime: python
+runtime: "python"
+startCommand:
+  type: "http"
+  configSchema:
+    type: "object"
+    properties:
+      api_key:
+        type: "string"
+        title: "FutureHouse API key"
+        description: "Visit https://platform.futurehouse.org/ to get your API key"
+    required: ["api_key"]
+build:
+  dockerfile: "Dockerfile"
+  dockerBuildPath: "."
