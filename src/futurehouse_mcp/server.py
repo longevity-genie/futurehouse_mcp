@@ -449,10 +449,14 @@ class FutureHouseMCP(FastMCP):
                 )
     
 # Create the MCP server instance lazily to avoid authentication during imports
-@smithery.server()
 def get_mcp_server():
     """Get or create the MCP server instance."""
     return FutureHouseMCP()
+
+@smithery.server()
+def start_mcp_smithery():
+    return get_mcp_server()
+
 
 # CLI application using typer
 app = typer.Typer()
