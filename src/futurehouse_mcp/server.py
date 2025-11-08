@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 """FutureHouse MCP Server - Interface for interacting with FutureHouse platform."""
 
-import asyncio
 import os
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Union
-import json
 from importlib.metadata import version, PackageNotFoundError
 from fastmcp import FastMCP, Context
 from pydantic import BaseModel, Field
@@ -13,8 +11,8 @@ from eliot import start_action
 import typer
 
 # Import FutureHouse client components
-from futurehouse_client import FutureHouseClient, JobNames
-from futurehouse_client.models import (
+from edison_client import EdisonClient, JobNames
+from edison_client.models import (
     RuntimeConfig,
     TaskRequest,
 )
@@ -60,7 +58,7 @@ class FutureHouseMCP(FastMCP):
             raise ValueError("FutureHouse API key is required. Set FUTUREHOUSE_API_KEY environment variable or pass api_key parameter.")
         
         # Initialize our FutureHouse client
-        self.client = FutureHouseClient(api_key=self.api_key)
+        self.client = EdisonClient(api_key=self.api_key)
         
         self.prefix = prefix
         
